@@ -1,8 +1,8 @@
-var app = reqiure('express')();
+var app = require('express')();
 var http = require('http').Server(app);
 
 app.get('/', function(req, res){
-    res.send(<h1>HelloWorld</h1>)
+    res.sendFile(require('path').join(__dirname + "/views/index.html"));
 });
 
 http.listen(3000, function(){
