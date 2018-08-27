@@ -48,6 +48,7 @@ class Player {
   //matches player with opponent of given ID
   match_opponent(id) {
     this.opponent = id;
+    all_players[this.opponent].sock.emit("match", this.name);
     console.log(this.id + " is now matched with " + id);
   }
 
