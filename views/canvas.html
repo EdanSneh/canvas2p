@@ -5,9 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Sockets Shooter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="./main.js"></script>
 </head>
 <body>
+    <style type="text/css">
+        html, body {
+            overflow: hidden;
+        }
+        canvas {
+            border:1px solid #d3d3d3;
+            background-color: #f1f1f1;
+        }
+    </style>
     <input type="text" name="name" placeholder="Enter Name" onkeydown = "sclick(this)">
-    <canvas id="gameCanvas"></canvas>
 </body>
