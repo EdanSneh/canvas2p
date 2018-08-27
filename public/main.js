@@ -1,17 +1,22 @@
 var canvas, ctx;
 
-window.addEventListener('keydown',this.check,false);
+
 
 var socket = io();
 
 var Player1;
 var Player2;
+var isheld = false;
 
 function init(){
     Player1 = new component(30,30,"red", 10, 120, "rect");
     Player2 = new component(30,30, "blue", 120, 10, "rect")
     myGameArea.start();
+    window.addEventListener('keydown',this.hold,false);
+    window.addEventListener('keyup',this.letgo,false);
 }
+
+
 
 function component(width, height, color, x, y, type) {
   this.info = {
@@ -19,6 +24,10 @@ function component(width, height, color, x, y, type) {
     position: {
       x: "none",
       y: "none",
+    },
+    speed: {
+      sx: "none",
+      sy: "none",
     }
   }
   this.type = type;
@@ -32,24 +41,17 @@ function component(width, height, color, x, y, type) {
       ctx.fillStyle = this.color;
       // ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
       if(action == 'right'){
-        for(let i = 0; i<10; i++){
-          this.info.position.x += 1        
-        }
+        this.info.position.x += 1  
       }
       if(action == 'left'){
-        for(let i = 0; i<10; i++){
-          this.info.position.x -= 1        
-        }
+        this.info.position.x -= 10        
       }
       if(action == 'down'){
-        for(let i = 0; i<10; i++){
-          this.info.position.y += 1    
-        }
+        this.info.position.y += 10    
       }
       if(action == 'up'){
-        for(let i = 0; i<10; i++){
-          this.info.position.y -= 1        
-        }
+        this.info.position.y -= 10        
+
       }
       ctx.fillText(this.info.name, this.info.position.x,this.info.position.y-5);
       ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
@@ -68,6 +70,9 @@ function component(width, height, color, x, y, type) {
   this.setName = function(name){
     this.info.name = name;
   }
+  this.stopRight = function(){
+    isheld = false
+  }
 }
 
 
@@ -84,24 +89,34 @@ function sclick(ele){
   }
 }
 
-function check(e){
-    code = e.keyCode
-    if(code == 39){
-        Player1.update('right')
-        socket.emit('information', Player1.info.position);
-    }
-    if(code == 40){
-        Player1.update('down')
-        socket.emit('information', Player1.info.position);
-    }
-    if(code == 38){
-      Player1.update('up')
-        socket.emit('information', Player1.info.position);
-    }
-    if(code == 37){
-      Player1.update('left')
-        socket.emit('information', Player1.info.position);
-    }
+//For key events
+function hold(e){
+  code = e.keyCode
+  if(code == 39 && isheld == false){
+    isheld = true;
+    //TODO: fix isheld to have an update function
+      // Player1.update('right')
+    socket.emit('information', Player1.info.position);
+  }
+  if(code == 40){
+    Player1.update('down')
+    socket.emit('information', Player1.info.position);
+  }
+  if(code == 38){
+    Player1.update('up')
+    socket.emit('information', Player1.info.position);
+  }
+  if(code == 37){
+    Player1.update('left')
+    socket.emit('information', Player1.info.position);
+  }
+}
+
+function letgo(e){
+  code = e.keyCode
+  if(code = 39){
+    Player1.stopRight()
+  }
 }
 
 
@@ -126,7 +141,20 @@ var myGameArea = {
 function updateGameArea() {
     myGameArea.clear();
     myGameArea.frameNo += 1;
+  if(isheld == true){
+    Player1.update("right");
+    myGameArea.clear();
+    Player1.update("right");
+    myGameArea.clear();
+    Player1.update("right");
+    myGameArea.clear();
+    Player1.update("right");
+    myGameArea.clear();
+    Player1.update("right");
+  }
+  else{
     Player1.update("none");
+  }
     Player2.update("none");
 }
 
