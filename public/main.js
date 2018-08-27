@@ -3,35 +3,41 @@ var canvas, ctx;
 window.addEventListener('keydown',this.check,false);
 
 var PlayerPosition = {
-    name: "none",
+  name: "none",
+  position: {
     x: "none",
     y: "none",
+  }
 }
 
 var socket = io();
 
 function sclick(ele){
-    if(event.key === 'Enter') {
-        PlayerPosition.name = ele.value
-        init();
-        ele.style.display = "none";
-        socket.emit('register', ele.value);
-    }
+  if(event.key === 'Enter') {
+    PlayerPosition.name = ele.value
+    init();
+    ele.style.display = "none";
+    socket.emit('register', ele.value);
+  }
 }
 
 function check(e){
     code = e.keyCode
     if(code == 39){
         Player.update('right')
+        socket.emit('information', PlayerPosition.position);
     }
     if(code == 40){
         Player.update('down')
+        socket.emit('information', PlayerPosition.position);
     }
     if(code == 38){
         Player.update('up')
+        socket.emit('information', PlayerPosition.position);
     }
     if(code == 37){
         Player.update('left')
+        socket.emit('information', PlayerPosition.position);
     }
 }
 
@@ -64,26 +70,26 @@ function component(width, height, color, x, y, type) {
     this.width = width;
     this.height = height;
     this.color = color;
-    PlayerPosition.x = x;
-    PlayerPosition.y =y;
+    PlayerPosition.position.x = x;
+    PlayerPosition.position.y =y;
     this.update = function(action) {
         ctx = myGameArea.context
         ctx.fillStyle = this.color;
-        // ctx.fillRect(PlayerPosition.x, PlayerPosition.y, this.width, this.height);
+        // ctx.fillRect(PlayerPosition.position.x, PlayerPosition.position.y, this.width, this.height);
         if(action == 'right'){
-            PlayerPosition.x = PlayerPosition.x+10      
+            PlayerPosition.position.x = PlayerPosition.position.x+10      
         }
         if(action == 'left'){
-            PlayerPosition.x = PlayerPosition.x-10
+            PlayerPosition.position.x = PlayerPosition.position.x-10
         }
         if(action == 'down'){
-            PlayerPosition.y = PlayerPosition.y+10
+            PlayerPosition.position.y = PlayerPosition.position.y+10
         }
         if(action == 'up'){
-            PlayerPosition.y = PlayerPosition.y-10
+            PlayerPosition.position.y = PlayerPosition.position.y-10
         }
-        ctx.fillText(PlayerPosition.name, PlayerPosition.x,PlayerPosition.y-5);
-        ctx.fillRect(PlayerPosition.x, PlayerPosition.y, this.width, this.height);
+        ctx.fillText(PlayerPosition.name, PlayerPosition.position.x,PlayerPosition.position.y-5);
+        ctx.fillRect(PlayerPosition.position.x, PlayerPosition.position.y, this.width, this.height);
     }
 }
 
