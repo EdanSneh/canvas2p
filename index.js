@@ -15,7 +15,6 @@ class Player {
   constructor(socket, name, id) {
     this.socket = socket;
     this.id = id;
-    this.opponent = null;
     this.name = name;
   }
 
@@ -42,13 +41,14 @@ class Player {
   }
 
   //returns opponent id
-  get opponent() {
+  get_opponent() {
     return this.opponent; 
   }
 
   //matches player with opponent of given ID
   match_opponent(id) {
     this.opponent = id;
+    console.log("match");
   }
 
 }
@@ -60,7 +60,7 @@ io.on('connection', function(socket){
     socket.on('information', (info)=> {
       const _player = all_users[Player.get_id_by_socket(socket)];
       //relay player info to its opponent
-      all_users[_player.opponent].sock.emit('information',info);
+      all_users[_player.get_opponent()].sock.emit('information',info);
     });
     socket.on('register', (name)=> {
       //expects a name from the user
