@@ -48,7 +48,7 @@ class Player {
   //matches player with opponent of given ID
   match_opponent(id) {
     this.opponent = id;
-    console.log("match");
+    console.log(this.id + " is now matched with " + id);
   }
 
 }
@@ -58,23 +58,25 @@ io.on('connection', function(socket){
 
     //fired up whenever the player moves
     socket.on('information', (info)=> {
-      const _player = all_users[Player.get_id_by_socket(socket)];
+      const _player = all_players[Player.get_id_by_socket(socket)];
       //relay player info to its opponent
-      all_users[_player.get_opponent()].sock.emit('information',info);
+      console.log(info);
+      all_players[_player.get_opponent()].sock.emit('information',info);
     });
+
     socket.on('register', (name)=> {
       //expects a name from the user
       //registers the new user into the queue and player list
       const _id = Player.generate_id();
-      all_players._id = new Player(socket, name, _id);
-      
+      all_players[_id] = new Player(socket, name, _id);
+
       //matches them with a player or puts them in queue
       if( match_queue.length <= 0) {
         match_queue.push(_id);
       } else {
         const _opponent_id = match_queue.shift();
-        all_players._id.match_opponent(_opponent_id);
-        all_players._opponent_id.match_opponent(_id);
+        all_players[_id].match_opponent(_opponent_id);
+        all_players[_opponent_id].match_opponent(_id);
       }
     });
 
