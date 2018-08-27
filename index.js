@@ -45,6 +45,10 @@ class Player {
     return this.opponent; 
   }
 
+  has_opponent() {
+    return !(typeof this.opponent === 'undefined' || this.opponent === null);
+  }
+
   //matches player with opponent of given ID
   match_opponent(id) {
     this.opponent = id;
@@ -55,14 +59,14 @@ class Player {
 }
 
 io.on('connection', function(socket){
-    console.log('a user connected');
 
     //fired up whenever the player moves
     socket.on('information', (info)=> {
+
       const _player = all_players[Player.get_id_by_socket(socket)];
       //relay player info to its opponent
-      console.log(info);
-      all_players[_player.get_opponent()].sock.emit('information',info);
+      if(_player.has_opponent()) 
+        all_players[_player.get_opponent()].sock.emit('information',info);
     });
 
     socket.on('register', (name)=> {
