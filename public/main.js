@@ -2,8 +2,17 @@ var canvas, ctx;
 
 window.addEventListener('keydown',this.check,false);
 
+var PlayerPosition = {
+    name: "none",
+    x: "none",
+    y: "none",
+}
+
+var socket = io();
+
 function sclick(ele){
     if(event.key === 'Enter') {
+        PlayerPosition.name = ele.value
         init();
         ele.style.display = "none";
         socket.emit('register', ele.value);
@@ -33,10 +42,7 @@ function init(){
     myGameArea.start();
 }
 
-var PlayerPosition = {
-    x: "none",
-    y: "none",
-}
+
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
@@ -58,32 +64,26 @@ function component(width, height, color, x, y, type) {
     this.width = width;
     this.height = height;
     this.color = color;
-    this.x = x;
-    this.y = y;
+    PlayerPosition.x = x;
+    PlayerPosition.y =y;
     this.update = function(action) {
         ctx = myGameArea.context
         ctx.fillStyle = this.color;
-        // ctx.fillRect(this.x, this.y, this.width, this.height);
+        // ctx.fillRect(PlayerPosition.x, PlayerPosition.y, this.width, this.height);
         if(action == 'right'){
-            this.x = this.x+10
-            ctx.fillRect(this.x, this.y, this.width, this.height);  
-            socket.emit('position', );        
+            PlayerPosition.x = PlayerPosition.x+10      
         }
         if(action == 'left'){
-            this.x = this.x-10
-            ctx.fillRect(this.x, this.y, this.width, this.height);           
+            PlayerPosition.x = PlayerPosition.x-10
         }
         if(action == 'down'){
-            this.y = this.y+10
-            ctx.fillRect(this.x, this.y, this.width, this.height);           
+            PlayerPosition.y = PlayerPosition.y+10
         }
         if(action == 'up'){
-            this.y = this.y-10
-            ctx.fillRect(this.x, this.y, this.width, this.height);           
+            PlayerPosition.y = PlayerPosition.y-10
         }
-        else{
-            ctx.fillRect(this.x, this.y, this.width, this.height);
-        }
+        ctx.fillText(PlayerPosition.name, PlayerPosition.x,PlayerPosition.y-5);
+        ctx.fillRect(PlayerPosition.x, PlayerPosition.y, this.width, this.height);
     }
 }
 

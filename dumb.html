@@ -23,7 +23,6 @@ function startGame() {
     myGameArea.start();
     $(function () {
         var socket = io();
-        $('form').submit(function(){
             socket.emit('chat message', $('#m').val());
             $('#m').val('');
             return false;
@@ -65,6 +64,7 @@ function component(width, height, color, x, y, type) {
             ctx.fillText(this.text, this.x, this.y);
         } else {
             ctx.fillStyle = color;
+            ctx.fillText("Hello World",this.x,this.y-5);
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
     }
