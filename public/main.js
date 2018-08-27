@@ -13,10 +13,64 @@ function init(){
     myGameArea.start();
 }
 
+function component(width, height, color, x, y, type) {
+  this.info = {
+    name: "none",
+    position: {
+      x: "none",
+      y: "none",
+    }
+  }
+  this.type = type;
+  this.width = width;
+  this.height = height;
+  this.color = color;
+  this.info.position.x = x;
+  this.info.position.y =y;
+  this.update = function(action) {
+      ctx = myGameArea.context
+      ctx.fillStyle = this.color;
+      // ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
+      if(action == 'right'){
+          this.info.position.x = this.info.position.x+10      
+      }
+      if(action == 'left'){
+          this.info.position.x = this.info.position.x-10
+      }
+      if(action == 'down'){
+          this.info.position.y = this.info.position.y+10
+      }
+      if(action == 'up'){
+          this.info.position.y = this.info.position.y-10
+      }
+      ctx.fillText(this.info.name, this.info.position.x,this.info.position.y-5);
+      ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
+  }
+  this.setX = function(x){
+    this.info.position.x = x;
+    ctx.fillText(this.info.name, this.info.position.x,this.info.position.y-5);
+    ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
+  }
+  this.setY = function(y){
+    this.info.position.y = y;
+    ctx.fillText(this.info.name, this.info.position.x,this.info.position.y-5);
+    ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
+
+  }
+  this.setName = function(name){
+    this.info.name = name;
+  }
+}
+
+
+
+
+
+
 function sclick(ele){
   if(event.key === 'Enter') {
-    Player1.Info.name = ele.value
     init();
+    Player1.info.name = ele.value
     ele.style.display = "none";
     socket.emit('register', ele.value);
   }
@@ -25,20 +79,20 @@ function sclick(ele){
 function check(e){
     code = e.keyCode
     if(code == 39){
-        Player1.Info.update('right')
-        socket.emit('information', Player1.Info.position);
+        Player1.update('right')
+        socket.emit('information', Player1.info.position);
     }
     if(code == 40){
-        Player1.Info.update('down')
-        socket.emit('information', Player1.Info.position);
+        Player1.update('down')
+        socket.emit('information', Player1.info.position);
     }
     if(code == 38){
-      Player1.Info.update('up')
-        socket.emit('information', Player1.Info.position);
+      Player1.update('up')
+        socket.emit('information', Player1.info.position);
     }
     if(code == 37){
-      Player1.Info.update('left')
-        socket.emit('information', Player1.Info.position);
+      Player1.update('left')
+        socket.emit('information', Player1.info.position);
     }
 }
 
@@ -61,58 +115,18 @@ var myGameArea = {
     }
 }
 
-function component(width, height, color, x, y, type) {
-    var Info = {
-      name: "none",
-      position: {
-        x: "none",
-        y: "none",
-      }
-    }
-    this.type = type;
-    this.width = width;
-    this.height = height;
-    this.color = color;
-    Info.position.x = x;
-    Info.position.y =y;
-    this.update = function(action) {
-        ctx = myGameArea.context
-        ctx.fillStyle = this.color;
-        // ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
-        if(action == 'right'){
-            Info.position.x = Info.position.x+10      
-        }
-        if(action == 'left'){
-            Info.position.x = Info.position.x-10
-        }
-        if(action == 'down'){
-            Info.position.y = Info.position.y+10
-        }
-        if(action == 'up'){
-            Info.position.y = Info.position.y-10
-        }
-        ctx.fillText(Info.name, Info.position.x,Info.position.y-5);
-        ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
-    }
-    this.setX = function(x){
-      Info.position.x = x;
-      ctx.fillText(Info.name, Info.position.x,Info.position.y-5);
-      ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
-    }
-    this.setY = function(y){
-      Info.position.y = y;
-      ctx.fillText(Info.name, Info.position.x,Info.position.y-5);
-      ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
-    }
-}
-
 function updateGameArea() {
     myGameArea.clear();
     myGameArea.frameNo += 1;
-    Player1.update("none")
+    Player1.update("none");
+    Player2.update("none");
 }
 
-socket.on('information', (info)=>{
+socket.on('information', (info) => {
   Player2.setX(info.x);
-  Player2.setY(info.y)
+  Player2.setY(info.y);
+})
+
+socket.on('match', (info) => {
+  Player2.setName(info);
 })
