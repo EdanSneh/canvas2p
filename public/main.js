@@ -2,19 +2,20 @@ var canvas, ctx;
 
 window.addEventListener('keydown',this.check,false);
 
-var PlayerPosition = {
-  name: "none",
-  position: {
-    x: "none",
-    y: "none",
-  }
-}
-
 var socket = io();
+
+var Player1;
+var Player2;
+
+function init(){
+    Player1 = new component(30,30,"red", 10, 120, "rect");
+    Player2 = new component(30,30, "blue", 120, 10, "rect")
+    myGameArea.start();
+}
 
 function sclick(ele){
   if(event.key === 'Enter') {
-    PlayerPosition.name = ele.value
+    Player1.Info.name = ele.value
     init();
     ele.style.display = "none";
     socket.emit('register', ele.value);
@@ -24,29 +25,24 @@ function sclick(ele){
 function check(e){
     code = e.keyCode
     if(code == 39){
-        Player.update('right')
-        socket.emit('information', PlayerPosition.position);
+        Player1.Info.update('right')
+        socket.emit('information', Player1.Info.position);
     }
     if(code == 40){
-        Player.update('down')
-        socket.emit('information', PlayerPosition.position);
+        Player1.Info.update('down')
+        socket.emit('information', Player1.Info.position);
     }
     if(code == 38){
-        Player.update('up')
-        socket.emit('information', PlayerPosition.position);
+      Player1.Info.update('up')
+        socket.emit('information', Player1.Info.position);
     }
     if(code == 37){
-        Player.update('left')
-        socket.emit('information', PlayerPosition.position);
+      Player1.Info.update('left')
+        socket.emit('information', Player1.Info.position);
     }
 }
 
-var Player;
 
-function init(){
-    Player = new component(30,30,"red", 10, 120, "rect");
-    myGameArea.start();
-}
 
 
 
@@ -66,35 +62,57 @@ var myGameArea = {
 }
 
 function component(width, height, color, x, y, type) {
+    var Info = {
+      name: "none",
+      position: {
+        x: "none",
+        y: "none",
+      }
+    }
     this.type = type;
     this.width = width;
     this.height = height;
     this.color = color;
-    PlayerPosition.position.x = x;
-    PlayerPosition.position.y =y;
+    Info.position.x = x;
+    Info.position.y =y;
     this.update = function(action) {
         ctx = myGameArea.context
         ctx.fillStyle = this.color;
-        // ctx.fillRect(PlayerPosition.position.x, PlayerPosition.position.y, this.width, this.height);
+        // ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
         if(action == 'right'){
-            PlayerPosition.position.x = PlayerPosition.position.x+10      
+            Info.position.x = Info.position.x+10      
         }
         if(action == 'left'){
-            PlayerPosition.position.x = PlayerPosition.position.x-10
+            Info.position.x = Info.position.x-10
         }
         if(action == 'down'){
-            PlayerPosition.position.y = PlayerPosition.position.y+10
+            Info.position.y = Info.position.y+10
         }
         if(action == 'up'){
-            PlayerPosition.position.y = PlayerPosition.position.y-10
+            Info.position.y = Info.position.y-10
         }
-        ctx.fillText(PlayerPosition.name, PlayerPosition.position.x,PlayerPosition.position.y-5);
-        ctx.fillRect(PlayerPosition.position.x, PlayerPosition.position.y, this.width, this.height);
+        ctx.fillText(Info.name, Info.position.x,Info.position.y-5);
+        ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
+    }
+    this.setX = function(x){
+      Info.position.x = x;
+      ctx.fillText(Info.name, Info.position.x,Info.position.y-5);
+      ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
+    }
+    this.setY = function(y){
+      Info.position.y = y;
+      ctx.fillText(Info.name, Info.position.x,Info.position.y-5);
+      ctx.fillRect(Info.position.x, Info.position.y, this.width, this.height);
     }
 }
 
 function updateGameArea() {
     myGameArea.clear();
     myGameArea.frameNo += 1;
-    Player.update("none")
+    Player1.update("none")
 }
+
+socket.on('information', (info)=>{
+  Player2.setX(info.x);
+  Player2.setY(info.y)
+})
