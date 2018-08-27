@@ -32,16 +32,24 @@ function component(width, height, color, x, y, type) {
       ctx.fillStyle = this.color;
       // ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
       if(action == 'right'){
-          this.info.position.x = this.info.position.x+10      
+        for(let i = 0; i<10; i++){
+          this.info.position.x += 1        
+        }
       }
       if(action == 'left'){
-          this.info.position.x = this.info.position.x-10
+        for(let i = 0; i<10; i++){
+          this.info.position.x -= 1        
+        }
       }
       if(action == 'down'){
-          this.info.position.y = this.info.position.y+10
+        for(let i = 0; i<10; i++){
+          this.info.position.y += 1    
+        }
       }
       if(action == 'up'){
-          this.info.position.y = this.info.position.y-10
+        for(let i = 0; i<10; i++){
+          this.info.position.y -= 1        
+        }
       }
       ctx.fillText(this.info.name, this.info.position.x,this.info.position.y-5);
       ctx.fillRect(this.info.position.x, this.info.position.y, this.width, this.height);
